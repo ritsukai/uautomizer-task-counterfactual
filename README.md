@@ -1,54 +1,78 @@
-# tb-1541 evidence
+# Does the agent work the bug out, or look the answer up?
 
-Evidence for a pre-registered counterfactual run on the Terminal-Bench task `fix-uautomizer-soundness`, in response to [harbor-framework/terminal-bench#1541](https://github.com/harbor-framework/terminal-bench/issues/1541).
+There is a benchmark task in which an AI agent is asked to fix a bug in **UltimateAutomizer**, a tool that reads a C program and decides whether it can go wrong. The tool has been sabotaged: three separate faults were introduced into its source, and the agent's job is to find and repair them. It is graded by running 22 small C programs through the repaired tool. Every one must come out right.
 
-Everything here is small and readable. Every number in the accompanying issue comment can be checked against a file in this repository.
+The task was built by taking a real open-source project and **reverting some of its code**. That is the problem. The correct code still exists publicly, on the internet the agent is allowed to use. So an agent might never diagnose anything — it might simply find the original project, compare it against the sabotaged copy, and copy the differences back.
 
-## The question
+A maintainer of the benchmark raised exactly this worry in [issue #1541](https://github.com/harbor-framework/terminal-bench/issues/1541). Another maintainer disagreed, arguing that finding the *right version* of a large, fast-moving project is itself most of the difficulty, and pointing out that nine earlier attempts had all failed.
 
-Issue #1541 asks whether the task is compromised because the bug it asks you to fix was created by reverting public open-source code — so an agent might diff against upstream and copy the answer without doing the diagnosis. A maintainer argued the opposite: finding the right upstream version is itself hard, and nine earlier trials scored 0/9.
+This repository is the evidence from an experiment run to settle it.
 
-The design ran the same task under three information conditions, changing **only** the instruction text:
+## How the experiment worked
 
-| Arm | Instruction |
+The same task was given to three AI models, three times each, under three different instructions. **Only the instruction text changed** — everything else was identical.
+
+| Condition | What the instruction said |
 |---|---|
-| **A** | exactly as shipped — no mention of upstream or open source |
-| **B** | plus one generic sentence: *"consider locating a plausible upstream baseline and comparing it with the local source"* |
-| **C** | plus the exact repository, the `v0.2.4` tag, and the two file paths |
+| **A** | The task exactly as it ships. No mention of open source, upstream code, or comparison. |
+| **B** | The same, plus one vague nudge: *"consider locating a plausible upstream baseline and comparing it with the local source."* |
+| **C** | The same, plus the exact address: which project, which version, and which two files to compare. |
 
-Three models × three arms × three trials = 27 trials.
+Three models × three conditions × three attempts = **27 runs**.
 
-## How scoring works
+The design, the number of runs, the order they would run in, and the standards for judging them were all written down and published **before any run happened** — so the analysis could not be quietly shaped to fit whatever turned up. See `DESIGN.md` and `DESIGN-LINEAGE.md`.
 
-Grading runs **22 hidden C programs**; all 22 must be correct to score. There are **three** independent injected defects, and nothing tells the agent how many exist.
+## Reading the scores
 
-**The shipped, untouched image already scores 8/22** — fourteen programs fail before any agent touches anything. Every number below is stated relative to that baseline, which is why a "12/22" is a repair of four tests, not a breakage of ten.
+Two things make the raw scores misleading unless you know them.
+
+**Scoring is all-or-nothing.** All 22 programs must be correct. Getting 21 right scores exactly the same as getting none right: zero.
+
+**The starting point is not zero — it is 8 out of 22.** The sabotaged tool already fails fourteen of the test programs before any agent touches it. So a run that ends at 12 out of 22 has *repaired four programs*, not broken ten. Every number below is given both ways: the raw score, and the improvement over that starting point.
+
+Neither of these is obvious from the benchmark's own output, and both changed our conclusions once we checked. See `CORRECTIONS.md`.
 
 ## Results
 
-| Arm | GPT-5.4 | Opus 4.6 | Fable 5 |
+Each cell shows **how many of the three runs fully solved the task**, then how much each run improved on the starting point.
+
+| Instruction given | GPT-5.4 | Opus 4.6 | Fable 5 |
 |---|---|---|---|
-| **A** — as shipped | 0/3 · +7 +5 +5 | 0/3 · +12 +4 +4 | **3/3 · +14 ×3** |
-| **B** — nudge | 0/3 · +4 +4 +4 | 0/3 · +4 +4 +6 | **3/3 · +14 ×3** |
-| **C** — coordinates | 2/3 · +14 +14 +7 | 2/3 · +14 +14 +12 | **3/3 · +14 ×3** |
+| **A** — nothing added | solved 0 of 3 · +7 +5 +5 | solved 0 of 3 · +12 +4 +4 | **solved 3 of 3** · +14 +14 +14 |
+| **B** — vague nudge | solved 0 of 3 · +4 +4 +4 | solved 0 of 3 · +4 +4 +6 | **solved 3 of 3** · +14 +14 +14 |
+| **C** — exact address | solved 2 of 3 · +14 +14 +7 | solved 2 of 3 · +14 +14 +12 | **solved 3 of 3** · +14 +14 +14 |
 
-`+N` = improvement over the 8/22 baseline; `+14` = a perfect 22/22.
+`+N` is the improvement over the 8-out-of-22 starting point. `+14` means a perfect 22 out of 22.
 
-**Every trial improved on the baseline. None regressed below it.** Exactly one program (`safe_condition_false`) ever fails where the baseline passes, and four independent codings attribute that to *unmasking* — repairing defect 1 while defect 3 remains broken — not to damage.
+Read the middle column of each cell, not just the pass count. **Every single run improved on the starting point, and none made things worse.** Exactly one test program ever fails where the untouched tool passes, and the reason is explained below — it is a side effect of a partial repair, not damage.
 
-## The mechanism
+Fable 5 solved the task every time, including when given no help at all. The other two models never solved it unaided, and solved it roughly two times in three when handed the answer's location.
 
-The task leaks its own version. When the verifier runs, it prints its build commit: `Version 0e0057cc`. That identifies the exact upstream commit, which makes a diff surgical — three files, three defects, no noise.
+## Why: the task gives itself away
 
-Across all 27 trials:
+The sabotaged tool **prints its own version number**. Every time it runs, its output includes a line naming the exact version of the original project it was built from.
 
-- **6 trials** read that banner and used it — all Fable 5, in arms A and B where no coordinates were given
-- **9 trials** used the tag supplied by arm C
-- **12 trials** never noticed it existed
+That single line is the whole game. With it, an agent can download precisely the right original version and compare — and the differences light up immediately: three files changed, three faults, nothing else. Without it, an agent faces a project of thousands of files whose current version has moved far from the one in front of it.
 
-GPT-5.4 and Opus printed the banner in their own output — sometimes eight or nine times — and never referenced it once. One trial (`G-B01`) found the correct upstream repository a different way, from copyright headers, then stopped at search-engine queries without ever fetching anything. Its coder's conclusion: *identifying the upstream was never the bottleneck; retrieving and diffing it was.*
+Across all 27 runs:
 
-The three defects are also very unequal. Defect 3 (unsigned widening) causes 7 of the 14 baseline failures and was **never attempted in 11 of 27 trials**, diagnosed locally exactly once. Defect 2 (XOR) was repeatedly *inspected and declared correct* — in one trial the agent wrote that the code "subtracts twice the AND term, so that's also correct", when the missing factor of two is the bug, and the correct identity is stated in a comment two lines above.
+- **6 runs** read that version line and used it — all of them Fable 5, in the two conditions where no address was given
+- **9 runs** used the address that condition C handed them
+- **12 runs** never noticed the version line at all
+
+The other two models printed that line in their own output — in one case nine times — and never once referred to it. One run found the right project by a different route, reading the copyright headers in the source, then ran a few web searches and gave up without ever downloading anything. As that run's assessment puts it: identifying the original was never the hard part. **Fetching it and comparing was.**
+
+## The three faults are not equally hard
+
+They look similar and behave nothing alike.
+
+**Fault 1** is the one the example program demonstrates. Every model found it by reasoning. It is not the problem.
+
+**Fault 3** causes half of all the failures — 7 of the 14 — so it is where most of the marks are. It was **never even attempted in 11 of the 27 runs**, and worked out by reasoning exactly once. Almost every run that downloaded the original fixed it; almost every run that did not never considered it.
+
+**Fault 2** is the strange one. Models did not overlook it — they examined it and **pronounced it correct**. One wrote that the code "subtracts twice the AND term, so that's also correct." It does not subtract twice the AND term; that omission is the bug. The correct formula is written in a comment two lines above the broken line. The model read the comment, read the code, and did not notice they disagreed.
+
+That is the real difficulty of this task. Not that any one fault is subtle, but that **nothing tells the agent there are three of them** — so it stops as soon as the visible symptom goes away.
 
 ## What is here
 
