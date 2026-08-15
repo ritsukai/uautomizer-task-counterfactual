@@ -1,0 +1,42 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.12, pytest-9.1.1, pluggy-1.6.0
+rootdir: /tests
+plugins: json-ctrf-0.5.2
+collected 5 items
+
+../tests/test_outputs.py ....F                                           [100%]
+
+=================================== FAILURES ===================================
+____________________________ test_expected_verdicts ____________________________
+
+    def test_expected_verdicts():
+        failures = []
+        for c_file, expected in EXPECTED:
+            result = _run_ultimate(c_file)
+            if result != expected:
+                failures.append((c_file, expected, result))
+>       assert not failures, "\n".join(
+            f"{c_file}: expected {expected}, got {result}"
+            for c_file, expected, result in failures
+        )
+E       AssertionError: /tests/safe_no_overflow.c: expected TRUE, got FALSE
+E         /tests/safe_condition_false.c: expected TRUE, got FALSE
+E         /tests/safe_small_sum.c: expected TRUE, got FALSE
+E         /tests/safe_two_ushorts.c: expected TRUE, got FALSE
+E         /tests/safe_bounded_mult.c: expected TRUE, got FALSE
+E         /tests/safe_zero_const_shift.c: expected TRUE, got FALSE
+E         /tests/unsafe_xor_mask_ff.c: expected FALSE, got TRUE
+E         /tests/safe_xor_mask_ff_eq.c: expected TRUE, got FALSE
+E         /tests/unsafe_widen_ushort_max_eq.c: expected FALSE, got TRUE
+E         /tests/safe_widen_ushort_max_neq.c: expected TRUE, got FALSE
+E       assert not [('/tests/safe_no_overflow.c', 'TRUE', 'FALSE'), ('/tests/safe_condition_false.c', 'TRUE', 'FALSE'), ('/tests/safe_sma...', 'FALSE'), ('/tests/safe_bounded_mult.c', 'TRUE', 'FALSE'), ('/tests/safe_zero_const_shift.c', 'TRUE', 'FALSE'), ...]
+
+/tests/test_outputs.py:214: AssertionError
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED ../tests/test_outputs.py::test_ultimate_py_unmodified
+PASSED ../tests/test_outputs.py::test_java_runtime_unmodified
+PASSED ../tests/test_outputs.py::test_trace_reporting_unmodified
+PASSED ../tests/test_outputs.py::test_cacsl_activator_unmodified
+FAILED ../tests/test_outputs.py::test_expected_verdicts - AssertionError: /te...
+=================== 1 failed, 4 passed in 172.86s (0:02:52) ====================

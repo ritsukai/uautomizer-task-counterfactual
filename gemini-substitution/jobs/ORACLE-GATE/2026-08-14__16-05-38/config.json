@@ -1,0 +1,9 @@
+{
+    "jobs_dir": "jobs/ORACLE-GATE",
+    "n_concurrent_trials": 1,
+    "tasks": [
+        {
+            "path": "arms/armA/fix-uautomizer-soundness"
+        }
+    ]
+}

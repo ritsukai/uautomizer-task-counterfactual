@@ -1,0 +1,77 @@
+{
+    "reportFormat": "CTRF",
+    "specVersion": "0.0.0",
+    "timestamp": "2026-08-14T19:06:11.372323+00:00",
+    "generatedBy": "pytest",
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "9.1.1"
+        },
+        "summary": {
+            "tests": 5,
+            "passed": 4,
+            "failed": 1,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1786734160105,
+            "stop": 1786734371372
+        },
+        "environment": {
+            "buildName": "Pytest JSON CTRF Report",
+            "buildNumber": "000",
+            "buildUrl": "https://ctrf.io"
+        },
+        "tests": [
+            {
+                "name": "test_outputs.py::test_ultimate_py_unmodified",
+                "status": "passed",
+                "duration": 2,
+                "start": 1786734160152,
+                "stop": 1786734160154,
+                "retries": 0,
+                "file_path": "test_outputs.py"
+            },
+            {
+                "name": "test_outputs.py::test_java_runtime_unmodified",
+                "status": "passed",
+                "duration": 3,
+                "start": 1786734160155,
+                "stop": 1786734160158,
+                "retries": 0,
+                "file_path": "test_outputs.py"
+            },
+            {
+                "name": "test_outputs.py::test_trace_reporting_unmodified",
+                "status": "passed",
+                "duration": 8,
+                "start": 1786734160159,
+                "stop": 1786734160167,
+                "retries": 0,
+                "file_path": "test_outputs.py"
+            },
+            {
+                "name": "test_outputs.py::test_cacsl_activator_unmodified",
+                "status": "passed",
+                "duration": 14,
+                "start": 1786734160167,
+                "stop": 1786734160181,
+                "retries": 0,
+                "file_path": "test_outputs.py"
+            },
+            {
+                "name": "test_outputs.py::test_expected_verdicts",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 211189,
+                "start": 1786734160182,
+                "stop": 1786734371371,
+                "retries": 0,
+                "file_path": "test_outputs.py",
+                "trace": "def test_expected_verdicts():\n        failures = []\n        for c_file, expected in EXPECTED:\n            result = _run_ultimate(c_file)\n            if result != expected:\n                failures.append((c_file, expected, result))\n>       assert not failures, \"\\n\".join(\n            f\"{c_file}: expected {expected}, got {result}\"\n            for c_file, expected, result in failures\n        )\nE       AssertionError: /tests/safe_no_overflow.c: expected TRUE, got FALSE\nE         /tests/safe_condition_false.c: expected TRUE, got FALSE\nE         /tests/safe_small_sum.c: expected TRUE, got FALSE\nE         /tests/safe_two_ushorts.c: expected TRUE, got FALSE\nE         /tests/safe_bounded_mult.c: expected TRUE, got FALSE\nE         /tests/safe_zero_const_shift.c: expected TRUE, got FALSE\nE         /tests/unsafe_xor_mask_ff.c: expected FALSE, got TRUE\nE         /tests/safe_xor_mask_ff_eq.c: expected TRUE, got FALSE\nE         /tests/unsafe_widen_ushort_max_eq.c: expected FALSE, got TRUE\nE         /tests/safe_widen_ushort_max_neq.c: expected TRUE, got FALSE\nE       assert not [('/tests/safe_no_overflow.c', 'TRUE', 'FALSE'), ('/tests/safe_condition_false.c', 'TRUE', 'FALSE'), ('/tests/safe_sma...', 'FALSE'), ('/tests/safe_bounded_mult.c', 'TRUE', 'FALSE'), ('/tests/safe_zero_const_shift.c', 'TRUE', 'FALSE'), ...]\n\n/tests/test_outputs.py:214: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            }
+        ]
+    }
+}

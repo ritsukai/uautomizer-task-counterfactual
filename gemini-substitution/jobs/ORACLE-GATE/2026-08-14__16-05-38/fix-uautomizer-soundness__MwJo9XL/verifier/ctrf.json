@@ -1,0 +1,74 @@
+{
+    "reportFormat": "CTRF",
+    "specVersion": "0.0.0",
+    "timestamp": "2026-08-14T16:11:32.222261+00:00",
+    "generatedBy": "pytest",
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "9.1.1"
+        },
+        "summary": {
+            "tests": 5,
+            "passed": 5,
+            "failed": 0,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1786723670433,
+            "stop": 1786723892222
+        },
+        "environment": {
+            "buildName": "Pytest JSON CTRF Report",
+            "buildNumber": "000",
+            "buildUrl": "https://ctrf.io"
+        },
+        "tests": [
+            {
+                "name": "test_outputs.py::test_ultimate_py_unmodified",
+                "status": "passed",
+                "duration": 3,
+                "start": 1786723670547,
+                "stop": 1786723670550,
+                "retries": 0,
+                "file_path": "test_outputs.py"
+            },
+            {
+                "name": "test_outputs.py::test_java_runtime_unmodified",
+                "status": "passed",
+                "duration": 12,
+                "start": 1786723670551,
+                "stop": 1786723670563,
+                "retries": 0,
+                "file_path": "test_outputs.py"
+            },
+            {
+                "name": "test_outputs.py::test_trace_reporting_unmodified",
+                "status": "passed",
+                "duration": 10,
+                "start": 1786723670563,
+                "stop": 1786723670573,
+                "retries": 0,
+                "file_path": "test_outputs.py"
+            },
+            {
+                "name": "test_outputs.py::test_cacsl_activator_unmodified",
+                "status": "passed",
+                "duration": 14,
+                "start": 1786723670574,
+                "stop": 1786723670588,
+                "retries": 0,
+                "file_path": "test_outputs.py"
+            },
+            {
+                "name": "test_outputs.py::test_expected_verdicts",
+                "status": "passed",
+                "duration": 221633,
+                "start": 1786723670588,
+                "stop": 1786723892221,
+                "retries": 0,
+                "file_path": "test_outputs.py"
+            }
+        ]
+    }
+}

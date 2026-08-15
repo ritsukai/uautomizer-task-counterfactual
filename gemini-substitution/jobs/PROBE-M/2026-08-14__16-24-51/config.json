@@ -1,0 +1,19 @@
+{
+    "jobs_dir": "/root/tb-1541/run/jobs/PROBE-M",
+    "install_only": true,
+    "n_concurrent_trials": 1,
+    "verifier": {
+        "disable": true
+    },
+    "agents": [
+        {
+            "name": "gemini-cli",
+            "model_name": "google/gemini-3.1-pro-preview"
+        }
+    ],
+    "tasks": [
+        {
+            "path": "/root/tb-1541/run/arms/armA/fix-uautomizer-soundness"
+        }
+    ]
+}

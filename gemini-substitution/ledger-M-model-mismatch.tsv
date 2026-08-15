@@ -1,0 +1,2 @@
+M-B01	invalid	M	B	0	gemini-2.5-pro	2026-08-14T16:29:33Z	2026-08-14T16:39:36Z	0	MODEL MISMATCH: design specifies google/gemini-3.1-pro-preview, trajectory recorded gemini-2.5-pro (silent CLI fallback). Not a valid measurement of the pre-registered model. Leg M halted pending resolution.
+M-A01	invalid	M	A	?	unreadable	2026-08-14T16:39:42Z	2026-08-14T16:44:52Z	130	harbor exit 130 / missing reward

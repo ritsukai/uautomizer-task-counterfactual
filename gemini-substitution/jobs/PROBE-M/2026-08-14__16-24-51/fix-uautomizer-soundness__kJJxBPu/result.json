@@ -1,0 +1,98 @@
+{
+    "id": "54aa3591-ecd0-4406-97bb-09c36de188fd",
+    "task_name": "terminal-bench/fix-uautomizer-soundness",
+    "trial_name": "fix-uautomizer-soundness__kJJxBPu",
+    "trial_uri": "file:///root/tb-1541/run/jobs/PROBE-M/2026-08-14__16-24-51/fix-uautomizer-soundness__kJJxBPu",
+    "task_id": {
+        "path": "/root/tb-1541/run/arms/armA/fix-uautomizer-soundness"
+    },
+    "source": null,
+    "task_checksum": "568938f98b11e9cc9d1a3852dd07d8fd7c765afb05a15718f42cc54a31445da6",
+    "config": {
+        "task": {
+            "path": "/root/tb-1541/run/arms/armA/fix-uautomizer-soundness",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": null
+        },
+        "trial_name": "fix-uautomizer-soundness__kJJxBPu",
+        "trials_dir": "/root/tb-1541/run/jobs/PROBE-M/2026-08-14__16-24-51",
+        "install_only": true,
+        "timeout_multiplier": 1.0,
+        "agent_timeout_multiplier": null,
+        "verifier_timeout_multiplier": null,
+        "agent_setup_timeout_multiplier": null,
+        "environment_build_timeout_multiplier": null,
+        "agent": {
+            "name": "gemini-cli",
+            "import_path": null,
+            "model_name": "google/gemini-3.1-pro-preview",
+            "n_concurrent": null,
+            "concurrency_group": null,
+            "skills": [],
+            "override_timeout_sec": null,
+            "override_setup_timeout_sec": null,
+            "max_timeout_sec": null,
+            "resume_trajectory": false,
+            "load_trajectory": null,
+            "extra_allowed_hosts": [],
+            "kwargs": {},
+            "mcp_servers": []
+        },
+        "environment": {
+            "type": "docker",
+            "import_path": null,
+            "force_build": false,
+            "delete": true,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "override_gpus": null,
+            "override_tpu": null,
+            "mounts": null,
+            "extra_docker_compose": [],
+            "kwargs": {},
+            "extra_allowed_hosts": []
+        },
+        "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "disable": true
+        },
+        "artifacts": [],
+        "extra_instruction_paths": [],
+        "job_id": "1067b46b-968b-4ef4-8090-70643b23478d",
+        "source_trial": null
+    },
+    "agent_info": {
+        "name": "gemini-cli",
+        "version": "0.55.1",
+        "model_info": {
+            "name": "gemini-3.1-pro-preview",
+            "provider": null
+        }
+    },
+    "agent_result": null,
+    "verifier_result": null,
+    "verifier_environment_mode": "separate",
+    "exception_info": null,
+    "started_at": "2026-08-14T16:24:51.566002Z",
+    "finished_at": "2026-08-14T16:29:27.857598Z",
+    "environment_setup": {
+        "started_at": "2026-08-14T16:24:51.606609Z",
+        "finished_at": "2026-08-14T16:28:49.324989Z"
+    },
+    "agent_setup": {
+        "started_at": "2026-08-14T16:28:49.325089Z",
+        "finished_at": "2026-08-14T16:29:14.314776Z"
+    },
+    "agent_execution": null,
+    "verifier": null,
+    "step_results": null
+}

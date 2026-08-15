@@ -1,0 +1,16 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.12, pytest-9.1.1, pluggy-1.6.0
+rootdir: /tests
+plugins: json-ctrf-0.5.2
+collected 5 items
+
+../tests/test_outputs.py .....                                           [100%]
+
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED ../tests/test_outputs.py::test_ultimate_py_unmodified
+PASSED ../tests/test_outputs.py::test_java_runtime_unmodified
+PASSED ../tests/test_outputs.py::test_trace_reporting_unmodified
+PASSED ../tests/test_outputs.py::test_cacsl_activator_unmodified
+PASSED ../tests/test_outputs.py::test_expected_verdicts
+======================== 5 passed in 197.21s (0:03:17) =========================

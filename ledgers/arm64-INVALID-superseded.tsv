@@ -1,0 +1,54 @@
+# SUPERSEDED AND VOID. This is the arm64 (Apple Silicon) ledger in which every trial is
+# environment-invalid: the task returns UNKNOWN for all 22 verifier programs on arm64, so no
+# agent could pass. See terminal-bench#1601. The authoritative records are legF/legG/legO.tsv.
+PROBE-G	ok	G	A	-	-	2026-08-13T14:31:41Z	2026-08-13T14:34:53Z	0	install-only
+PROBE-M	ok	M	A	-	-	2026-08-13T14:34:53Z	2026-08-13T14:35:27Z	0	install-only
+NOTE-PREBLOCK	note	F,O	-	-	-	2026-08-13T14:59:31Z	-	-	operator pre-block: Claude weekly window exhausted until 2026-08-17T07:00Z; G/M proceed per skip-while-blocked rule (A1 s20.2)
+NOTE-HASHPOST	note	-	-	-	-	2026-08-13T15:17:18Z	-	-	A1 hash 788ca364 posted publicly 2026-08-13T15:16:44Z (issue #1541); s14 pre-trial gate satisfied
+SKIP-F-B01	skip	F	B	-	-	2026-08-13T15:17:19Z	-	-	leg blocked
+SKIP-F-A01	skip	F	A	-	-	2026-08-13T15:17:19Z	-	-	leg blocked
+SKIP-F-C01	skip	F	C	-	-	2026-08-13T15:17:19Z	-	-	leg blocked
+SKIP-O-B01	skip	O	B	-	-	2026-08-13T15:17:19Z	-	-	leg blocked
+SKIP-O-A01	skip	O	A	-	-	2026-08-13T15:17:19Z	-	-	leg blocked
+SKIP-O-C01	skip	O	C	-	-	2026-08-13T15:17:19Z	-	-	leg blocked
+NOTE-PREBLOCK-CORRECTION	note	F,O	-	-	-	2026-08-13T15:22:49Z	-	-	CORRECTION: NOTE-PREBLOCK was WRONG. The weekly-limit refusal was observed on the ambient Claude Code login, not the CLAUDE_CODE_OAUTH_TOKEN path the trials use. Re-probed via the trial auth path at this timestamp: claude-fable-5 ok, claude-opus-4-6 ok. Legs F and O unblocked; earlier F/O SKIP rows stand as ledgered and their slots re-run.
+G-B01	invalid	G	B	?	unreadable	2026-08-13T15:17:19Z	2026-08-13T15:29:43Z	0	harbor exit 0 / missing reward
+G-A01	invalid	G	A	?	unreadable	2026-08-13T15:29:43Z	2026-08-13T15:39:35Z	0	harbor exit 0 / missing reward
+G-B01-RE	valid	G	B	0	openai/gpt-5.4	2026-08-13T15:47:18Z	-	0	RE-EXTRACTED: supersedes earlier invalid row (coordinator extraction bug read the job-level result.json instead of the trial dir; trial itself completed normally, 0 harness exceptions)
+G-A01-RE	valid	G	A	0	openai/gpt-5.4	2026-08-13T15:47:18Z	-	0	RE-EXTRACTED: supersedes earlier invalid row (coordinator extraction bug read the job-level result.json instead of the trial dir; trial itself completed normally, 0 harness exceptions)
+G-C01-VOID	invalid	G	C	-	-	2026-08-13T15:47:27Z	-	-	INFRASTRUCTURE ABORT: killed mid-run by coordinator during host disk-exhaustion intervention (host reached 1GB free). No verifier run, no reward. Replaced per DESIGN s8.
+NOTE-DISK	note	-	-	-	-	2026-08-13T15:47:27Z	-	-	HOST DISK INCIDENT: three arm task dirs build three separate image sets (~8GB each, ~24GB resident). Host fell 61GB->1GB during the first three trials; runner stopped, containers stopped, docker pruned (reclaimed 11.35GB). Sequence paused pending headroom decision. Trials G-B01/G-A01 unaffected (completed before the squeeze).
+NOTE-SHAKEDOWN	note	H	-	-	-	2026-08-13T15:59:37Z	-	-	operator-ruled shakedown: full cheap-model (haiku-4-5) trial per arm through the complete runner pipeline, excluded infrastructure runs; validates runner extraction + three-arm image footprint that the single-arm smoke could not cover; also pre-builds the arm images all legs reuse
+SHAKE-A	valid	H	A	0	claude-haiku-4-5-20251001	2026-08-13T15:59:38Z	2026-08-13T16:25:56Z	0	
+SHAKE-B	valid	H	B	0	claude-haiku-4-5-20251001	2026-08-13T16:25:56Z	2026-08-13T16:53:38Z	0	
+SHAKE-C	valid	H	C	0	claude-haiku-4-5-20251001	2026-08-13T16:53:38Z	2026-08-13T17:08:55Z	0	
+F-B01	valid	F	B	0	claude-fable-5	2026-08-13T17:09:59Z	2026-08-13T17:42:09Z	0	
+F-A01	valid	F	A	0	claude-fable-5	2026-08-13T17:42:09Z	2026-08-13T17:59:36Z	0	
+F-C01	valid	F	C	0	claude-fable-5	2026-08-13T17:59:37Z	2026-08-13T18:16:12Z	0	
+PROBE-O	blocked	O	A	-	-	2026-08-13T18:16:12Z	2026-08-13T18:18:08Z	0	rate-limit
+PROBE-O-CORRECTION	ok	O	A	-	claude-opus-4-6	2026-08-13T18:19:42Z	-	0	CORRECTION: PROBE-O "blocked" was a FALSE POSITIVE — harbor mislabels max_turns=1 probe exits as ApiRateLimitError (documented in Phase A findings). Trajectory confirms claude-opus-4-6 authenticated and produced steps; harbor exit 0. Leg O unblocked; its skipped slots re-run on the next run invocation.
+G-C01	valid	G	C	0	openai/gpt-5.4	2026-08-13T18:18:08Z	2026-08-13T18:30:58Z	0	
+M-B01	valid	M	B	0	none	2026-08-13T18:30:58Z	2026-08-13T18:32:54Z	0	
+M-A01	valid	M	A	0	none	2026-08-13T18:32:55Z	2026-08-13T18:34:36Z	0	
+M-C01	valid	M	C	0	none	2026-08-13T18:34:36Z	2026-08-13T18:36:13Z	0	
+F-C02	valid	F	C	0	claude-fable-5	2026-08-13T18:36:14Z	2026-08-13T18:50:31Z	0	
+F-B02	valid	F	B	0	claude-fable-5	2026-08-13T18:50:33Z	2026-08-13T19:11:32Z	0	
+F-A02	valid	F	A	0	claude-fable-5	2026-08-13T19:11:35Z	2026-08-13T19:32:17Z	0	
+O-C02	invalid	O	C	0	<synthetic>,claude-opus-4-6	2026-08-13T19:32:18Z	2026-08-13T19:48:32Z	0	rate-limit/window marker in log
+SKIP-O-B02	skip	O	B	-	-	2026-08-13T19:48:32Z	-	-	leg blocked
+SKIP-O-A02	skip	O	A	-	-	2026-08-13T19:48:32Z	-	-	leg blocked
+G-C02	valid	G	C	0	openai/gpt-5.4	2026-08-13T19:48:32Z	2026-08-13T19:57:34Z	0	
+G-B02	invalid	G	B	?	openai/gpt-5.4	2026-08-13T19:57:34Z	2026-08-13T20:39:58Z	0	harbor exit 0 / missing reward
+G-A02	invalid	G	A	?	unreadable	2026-08-13T20:39:59Z	2026-08-13T21:10:03Z	0	harbor exit 0 / missing reward
+M-C02	invalid	M	C	?	unreadable	2026-08-13T21:10:03Z	2026-08-13T21:17:01Z	0	harbor exit 0 / missing reward
+M-B01-CORRECTION	invalid	M	B	-	-	2026-08-13T21:19:43Z	-	-	CORRECTION: M-B01 earlier "valid" row is WRONG — agent exited at step 1 with 429 MODEL_CAPACITY_EXHAUSTED, and the model that ran was gemini-2.5-pro (CLI default), NOT the pinned gemini-3.1-pro-preview; the model pin did not reach the in-container CLI. Invalid per s8 cond 2 + s20.3. Verifier graded an untouched workspace. Leg M blocked pending adapter fix.
+M-A01-CORRECTION	invalid	M	A	-	-	2026-08-13T21:19:43Z	-	-	CORRECTION: M-A01 earlier "valid" row is WRONG — agent exited at step 1 with 429 MODEL_CAPACITY_EXHAUSTED, and the model that ran was gemini-2.5-pro (CLI default), NOT the pinned gemini-3.1-pro-preview; the model pin did not reach the in-container CLI. Invalid per s8 cond 2 + s20.3. Verifier graded an untouched workspace. Leg M blocked pending adapter fix.
+M-C01-CORRECTION	invalid	M	C	-	-	2026-08-13T21:19:43Z	-	-	CORRECTION: M-C01 earlier "valid" row is WRONG — agent exited at step 1 with 429 MODEL_CAPACITY_EXHAUSTED, and the model that ran was gemini-2.5-pro (CLI default), NOT the pinned gemini-3.1-pro-preview; the model pin did not reach the in-container CLI. Invalid per s8 cond 2 + s20.3. Verifier graded an untouched workspace. Leg M blocked pending adapter fix.
+NOTE-M-LEG	note	M	-	-	-	2026-08-13T21:21:40Z	-	-	EVIDENCE: host-side probe with -m gemini-3.1-pro-preview and -o json shows serving models gemini-3.1-flash-lite + gemini-2.5-flash — the oauth-personal/Code-Assist path does NOT honor model pins for this account (gemini-cli 24805 family). Leg M infeasible on subscription auth as specified in A1 20.1. Pending operator decision: drop leg (A2) or switch leg to GEMINI_API_KEY auth (paid, pins models properly).
+M-B02	invalid	M	B	?	gemini-2.5-pro	2026-08-13T21:17:01Z	2026-08-13T21:49:11Z	0	harbor exit 0 / missing reward
+SKIP-M-A02	skip	M	A	-	-	2026-08-13T21:49:12Z	-	-	leg blocked
+ORACLE-CHECK	infra	-	A		-	2026-08-14T06:29:16Z	2026-08-14T06:29:16Z	0	structural soundness check: harbor oracle agent applies the task reference solution and runs the verifier; run on operator question re universal arm-C failure
+HALT-ENVIRONMENT	note	-	-	-	-	2026-08-14T06:57:33Z	-	-	SEQUENCE HALTED. Oracle check (task reference solution, applied+compiled+jar-patched successfully) scores 0: all 22 verifier programs return UNKNOWN, never TRUE/FALSE. Same all-UNKNOWN pattern in EVERY completed trial (F-C01, F-A01, SHAKE-C, G-B01 = 22/22 UNKNOWN each). No agent can pass on this host; UltimateAutomizer produces no verdicts here. Prime suspect: arm64 host (task deletes bundled x86_64 mathsat/cvc4 solvers and substitutes apt z3; leaderboard ran amd64). All trials to date are environment-invalid pending amd64 confirmation.
+ORACLE-AMD64	valid	-	A	1	-	2026-08-14T07:15:02Z	-	-	CONFIRMED: amd64 oracle scores 1 (5/5 verifier tests pass, 0 UNKNOWN). Same task, same reference solution, same harbor, only arch differs -> arm64 host is the cause of the universal all-UNKNOWN failure. Task is SOUND. All 4 completed trials + shakedown are environment-invalid and must be rerun on amd64.
+ORACLE-GATE-DROPLET	valid	-	A	1	-	2026-08-14T14:12:50Z	2026-08-14T14:12:50Z	0	GATE PASSED on DO droplet tb-1541-amd64 (<DROPLET-IP-REDACTED>, s-8vcpu-16gb, native x86_64, nyc3). Oracle 5/5 tests pass, 0 UNKNOWN, 13m39s. Native x86 agrees with emulated amd64 -> environment is sound for the re-run. arm64 Mac results remain environment-invalid. Trials may now spend.
+PIPE-VALIDATE-G-C	infra	G	C	1	openai/gpt-5.6-luna	2026-08-14T15:48:14Z	2026-08-14T15:48:14Z	0	PIPELINE VALIDATED end-to-end on droplet: codex/gpt-5.6-luna on arm C (max leakage) scores 1, 5/5 verifier tests, 0 UNKNOWN, all 4 integrity guards pass (no Ultimate.py/JRE/TraceAbstraction/Activator tampering). Confirms a real agent CAN pass on this host. EXCLUDED from the 36-trial sequence (validation run, out of frozen order).

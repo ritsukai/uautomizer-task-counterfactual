@@ -1,0 +1,15 @@
+{
+    "jobs_dir": "/root/tb-1541/run/jobs/M-B01",
+    "n_concurrent_trials": 1,
+    "agents": [
+        {
+            "name": "gemini-cli",
+            "model_name": "google/gemini-3.1-pro-preview"
+        }
+    ],
+    "tasks": [
+        {
+            "path": "/root/tb-1541/run/arms/armB/fix-uautomizer-soundness"
+        }
+    ]
+}

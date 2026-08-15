@@ -1,0 +1,12 @@
+{
+    "task": {
+        "path": "/root/tb-1541/run/arms/armA/fix-uautomizer-soundness"
+    },
+    "trial_name": "fix-uautomizer-soundness__5cUxMcB",
+    "trials_dir": "/root/tb-1541/run/jobs/M-A01/2026-08-14__16-39-43",
+    "agent": {
+        "name": "gemini-cli",
+        "model_name": "google/gemini-3.1-pro-preview"
+    },
+    "job_id": "0365e41d-13ab-4f54-a669-61e0a453dd22"
+}
