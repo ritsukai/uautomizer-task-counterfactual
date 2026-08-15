@@ -1,31 +1,36 @@
-# Design lineage
+# Why there are two published versions of the design
 
-Two design revisions were publicly hashed on issue #1541 before any trials ran. This file records both, so the pre-registration claim can be checked against the right one.
+The point of writing the design down and publishing a fingerprint of it *before* running anything is that nobody can later reshape the plan to fit whatever the results turned out to be. That only works if it is clear which version governs.
 
-| Revision | SHA-256 | Posted | Content |
-|---|---|---|---|
-| v1 | `0a7f30ac8276c1fb72ed264a627537b7b2fdcaa37ee3c984c54c5cf3fbca1bcd` | 2026-08-12 17:31 UTC | Three arms, Claude Code + Fable 5 only |
-| **v1+A1** | **`788ca364f417317e6b56bb172e4e89920926048a3e5bd147aeb76486a11adc43`** | **2026-08-13 15:16 UTC** | **Four setups, after a maintainer asked for the original agent configurations** |
+There are two. Both were published openly, in the discussion thread, before any run they applied to.
 
-**`DESIGN.md` in this repository is v1+A1** — the revision the runs executed under. `runner/run-trials.sh` names that hash in its header comment.
+| Version | Published | What it said |
+|---|---|---|
+| First | 12 August 2026, 17:31 UTC | Three instruction conditions, tested on one AI model. |
+| **Second — the one that governs** | **13 August 2026, 15:16 UTC** | **Three instruction conditions, tested on four model setups.** |
 
-## Why there are two
+**`DESIGN.md` in this repository is the second version** — the one the runs were actually carried out under. The script that ran the experiment names its fingerprint in its opening comment.
 
-The first design proposed three arms on a single agent configuration. In the thread, Anjiang-Wei asked that the counterfactual use the same three agent setups as the original evaluation, since the task's difficulty was established with those. The design was amended to four setups: the three acceptance-era configurations plus the Fable pair, so the results speak to both "does the task hold up as accepted" and "does it hold up against today's agents". The amended design was re-hashed and the new hash posted before trials began.
+## Why it was revised
 
-A pre-hash amendment is also recorded inside `DESIGN.md` itself: the confirmatory sample was reduced from five to three valid trials per arm, and a pre-declared maintainer-extension rule was added, both by operator decision after cost review and both disclosed before the hash.
+The first version proposed testing a single AI configuration. In the discussion, a maintainer asked that the test use the same three model setups that were used when the task's difficulty was originally established — reasonably, since a result on a different model says little about whether the original judgement still holds.
 
-## Verify
+The design was widened to four setups: the three original ones, plus the current leaderboard-leading pair. That way the results speak to two different questions at once — whether the task still holds up as it was accepted, and whether it holds up against today's strongest agents.
+
+The revised design was published, with a new fingerprint, before any run began.
+
+The design document also records one earlier change made before its own fingerprint was fixed: the number of attempts per condition was reduced from five to three after a cost review, and a rule was added in advance covering what would happen if a maintainer asked for more. Both were disclosed at the time rather than discovered later.
+
+## Checking this yourself
 
 ```sh
 shasum -a 256 DESIGN.md
-# 788ca364f417317e6b56bb172e4e89920926048a3e5bd147aeb76486a11adc43
 ```
 
-Cross-check that value against the comment posted to [#1541](https://github.com/harbor-framework/terminal-bench/issues/1541) on 13 August 2026, which predates the first valid trial in `ledgers/`.
+Compare the result against the fingerprint posted in the discussion thread on 13 August 2026. That message is timestamped earlier than the first valid run recorded in `run-log/`.
 
-## What pre-registration does and does not establish here
+## What this does and does not establish
 
-It establishes that the arms, the trial count, the ordering, the coding rubric and the interpretation table were fixed before results existed — so the analysis could not be shaped to fit them.
+**It does establish** that the conditions, the number of attempts, the order they ran in, the standards for judging them, and the way results would be interpreted were all fixed before any result existed. The analysis could not have been bent to fit the findings, because the findings did not exist yet.
 
-It does **not** establish independence from the run owner. The hash was posted by the same party that ran the trials; a local pre-registration is discipline, not proof against the person keeping it. The raw artifacts are available so that the discipline can be audited rather than trusted.
+**It does not establish independence.** The fingerprint was published by the same person who then ran the experiment. Writing your plan down in advance is a discipline you impose on yourself; it is not proof to someone who does not trust you. That is why the underlying records are published too — so the discipline can be audited rather than simply believed.

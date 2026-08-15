@@ -1,42 +1,59 @@
-# Baseline: the untouched image
+# Why the starting score is 8 out of 22
 
-Before any agent touches the task, the shipped image already fails **14 of 22** hidden programs.
-It scores **8/22**.
+The sabotaged tool does not start from zero, and it does not start from perfect. **Before any AI
+touches it, it already answers 14 of the 22 test programs wrongly.** It scores 8 out of 22.
 
-This is measured from `PROBE-O`, a `max_turns=1` probe in which the agent could take no
-meaningful action. Its verifier output is preserved at `results/verifier/BASELINE-PROBE-O/`.
+This matters for reading every other number here. A run that finishes on 12 out of 22 has
+**repaired four programs**. It has not broken ten.
 
-Every score in `results/MASTER-SUMMARY.tsv` is reported both absolutely (`score`) and relative to
-this baseline (`delta`). A trial at 12/22 has **repaired four** programs, not broken ten.
+## Where this figure comes from
 
-## The 14 programs that fail before any agent runs
+A control run in which the AI was allowed a single step and could not meaningfully act. The tool it
+was graded on is therefore the tool as shipped. The grading output is preserved at
+`results/verifier/BASELINE-PROBE-O/`, and you can count the failures yourself:
 
-- `safe_bounded_mult.c`: expected TRUE, got FALSE
-- `safe_no_overflow.c`: expected TRUE, got FALSE
-- `safe_small_sum.c`: expected TRUE, got FALSE
-- `safe_two_ushorts.c`: expected TRUE, got FALSE
-- `safe_widen_ushort_max_neq.c`: expected TRUE, got FALSE
-- `safe_xor_mask_ff_eq.c`: expected TRUE, got FALSE
-- `safe_zero_const_shift.c`: expected TRUE, got FALSE
-- `unsafe_multi_shift.c`: expected FALSE, got TRUE
-- `unsafe_rshift1.c`: expected FALSE, got TRUE
-- `unsafe_rshift2.c`: expected FALSE, got TRUE
-- `unsafe_rshift3.c`: expected FALSE, got TRUE
-- `unsafe_two_shorts.c`: expected FALSE, got TRUE
-- `unsafe_widen_ushort_max_eq.c`: expected FALSE, got TRUE
-- `unsafe_xor_mask_ff.c`: expected FALSE, got TRUE
+```sh
+grep -cE "expected (TRUE|FALSE), got" results/verifier/BASELINE-PROBE-O/test-stdout.txt
+```
 
-## Which defect governs which
+## The 14 programs that fail before anyone starts
 
-- **D1** (constant-shift wraparound) governs the five `unsafe_rshift*` / `unsafe_multi_shift` /
-  `unsafe_two_shorts` programs. Every trial in the dataset repaired these.
-- **D2** (XOR identity) governs `unsafe_xor_mask_ff` and `safe_xor_mask_ff_eq`.
-- **D3** (unsigned widening) governs the remaining seven, all of which involve
-  `(unsigned int)<narrow>` widening. **D3 is the single largest scoring lever and was never
-  attempted in 11 of 27 trials.**
+Each line shows the program, the answer it should give, and the answer the sabotaged tool gives.
 
-## One program behaves specially
+- `safe_bounded_mult.c`  — should be TRUE, but gives FALSE
+- `safe_no_overflow.c`  — should be TRUE, but gives FALSE
+- `safe_small_sum.c`  — should be TRUE, but gives FALSE
+- `safe_two_ushorts.c`  — should be TRUE, but gives FALSE
+- `safe_widen_ushort_max_neq.c`  — should be TRUE, but gives FALSE
+- `safe_xor_mask_ff_eq.c`  — should be TRUE, but gives FALSE
+- `safe_zero_const_shift.c`  — should be TRUE, but gives FALSE
+- `unsafe_multi_shift.c`  — should be FALSE, but gives TRUE
+- `unsafe_rshift1.c`  — should be FALSE, but gives TRUE
+- `unsafe_rshift2.c`  — should be FALSE, but gives TRUE
+- `unsafe_rshift3.c`  — should be FALSE, but gives TRUE
+- `unsafe_two_shorts.c`  — should be FALSE, but gives TRUE
+- `unsafe_widen_ushort_max_eq.c`  — should be FALSE, but gives TRUE
+- `unsafe_xor_mask_ff.c`  — should be FALSE, but gives TRUE
 
-`safe_condition_false.c` **passes** at baseline and fails in every trial that repaired D1 while
-leaving D3 broken; it passes again in trials that repaired both. It is a masking artifact, not a
-regression introduced by any agent. See `CORRECTIONS.md` §1.
+## Which fault causes which failure
+
+The three planted faults are not equally costly.
+
+- **Fault 1** — mishandled bit-shifting. Causes the five `unsafe_rshift*`, `unsafe_multi_shift` and
+  `unsafe_two_shorts` failures. **Every run in the experiment repaired these.** This is the fault the
+  example program in the task description demonstrates, so every model found it.
+
+- **Fault 2** — a wrong formula in one shortcut. Causes the two `xor_mask_ff` failures.
+
+- **Fault 3** — mishandled type conversion. Causes the remaining seven, all of which involve
+  converting a small unsigned number to a larger one. **This is where most of the marks are, and it
+  was never even attempted in 11 of the 27 runs.**
+
+## One program behaves oddly, and it is not a mistake
+
+`safe_condition_false.c` **passes** on the untouched tool, and fails in every run that repaired
+fault 1 while leaving fault 3 in place. It passes again in runs that repaired both.
+
+It is not damage caused by the AI. The original fault was masking it: fixing fault 1 alone exposes a
+second problem that only the fault 3 repair resolves. This was one of the things we initially got
+wrong — see `CORRECTIONS.md`.

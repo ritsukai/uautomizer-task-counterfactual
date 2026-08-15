@@ -74,65 +74,141 @@ They look similar and behave nothing alike.
 
 That is the real difficulty of this task. Not that any one fault is subtle, but that **nothing tells the agent there are three of them** — so it stops as soon as the visible symptom goes away.
 
-## What is here
+## How runs are named
 
-```
-DESIGN.md                  frozen pre-registration; sha256 788ca364…, posted to #1541 before the runs
-DESIGN-LINEAGE.md          the two publicly-hashed design revisions and why there are two
-CORRECTIONS.md             three mid-analysis corrections that each changed a conclusion
-LIMITATIONS.md             what this does not prove — read before citing anything
-results/
-  MASTER-SUMMARY.tsv       all 27 trials, one row each, baseline-relative
-  verifier/<TRIAL>/        test-stdout.txt, reward.txt, ctrf.json  (+ BASELINE-PROBE-O)
-codings/
-  CODING-INSTRUCTIONS.md   the rubric, frozen before coding
-  <TRIAL>.md               27 per-trial codings: provenance, chronology, byte offsets
-ledgers/                   per-leg run records, plus the superseded arm64 ledger
-arms/                      the three instruction.md files that differ, and their hashes
-runner/                    the script that executed the sequence, and the frozen trial order
-gemini-substitution/       evidence for the Gemini model-substitution finding
-MANIFEST.sha256            digest of every file here
-```
+Every run has a three-part name like **`F-A01`**:
 
-## How to check a claim
+| Part | Meaning |
+|---|---|
+| first letter | which model — **F** = Fable 5, **O** = Opus 4.6, **G** = GPT-5.4 |
+| second letter | which instruction — **A**, **B** or **C**, as in the table above |
+| number | which of the three attempts |
+
+So `F-A01` is Fable 5's first attempt under the plainest instruction. Every file about that run uses that name.
+
+## What is in this repository
+
+**Start here**
+
+| File | What it is |
+|---|---|
+| `LIMITATIONS.md` | What this evidence does **not** establish. Read before quoting anything. |
+| `CORRECTIONS.md` | Three conclusions we reached, published, and then found to be wrong. |
+| `results/BASELINE.md` | Why the starting score is 8 out of 22, and which programs already fail. |
+
+**The results**
+
+| Path | What it is |
+|---|---|
+| `results/MASTER-SUMMARY.tsv` | One row per run: score, improvement, and a summary of how it worked. |
+| `results/verifier/<run>/` | The grading program's own output for that run — which test programs passed, which failed, and the final score. |
+| `results/verifier/BASELINE-PROBE-O/` | The same, for the untouched tool. This is where the 8-out-of-22 figure comes from. |
+
+**How each run was judged**
+
+| Path | What it is |
+|---|---|
+| `assessments/<run>.md` | A written account of how that run reached its result: whether it worked the faults out or copied them from the original project, and what evidence supports that. |
+| `assessments/HOW-WE-JUDGED.md` | The standards used, written down before anyone read a single run. |
+
+**The rules, fixed in advance**
+
+| Path | What it is |
+|---|---|
+| `DESIGN.md` | The full experiment design, published before any run happened. |
+| `DESIGN-LINEAGE.md` | There are two published versions of the design; this explains why, and which one governs. |
+| `procedure/` | The script that carried out the runs, and the order they were fixed to run in. |
+| `instructions/` | The three instruction texts that were varied, and fingerprints proving these are the ones used. |
+
+**Supporting records**
+
+| Path | What it is |
+|---|---|
+| `run-log/` | A running log of every run, written as it happened, including the ones that were thrown out. |
+| `gemini-finding/` | Evidence that a fourth model could not be tested, because its tool silently substituted a different model than the one requested. |
+| `MANIFEST.sha256` | A fingerprint of every file here, so you can confirm nothing has been altered. |
+
+## Checking any of this yourself
+
+You need nothing but a terminal. Replace `F-A01` with any run name.
 
 ```sh
-# any trial's score: reward, then count the failing programs
-cat results/verifier/F-A01/reward.txt                                    # → 1
-grep -cE 'expected (TRUE|FALSE), got' results/verifier/F-A01/test-stdout.txt   # → 0 failures = 22/22
+# What did this run score? "1" means it solved the task; "0" means it did not.
+cat results/verifier/F-A01/reward.txt
 
-# the baseline: 14 failures on the untouched image = 8/22
+# How many of the 22 test programs did it get wrong?
+grep -cE 'expected (TRUE|FALSE), got' results/verifier/F-A01/test-stdout.txt
+```
+
+Careful with that second command: match the whole phrase as written. Searching for the word
+"expected" alone also matches a line the grading tool prints about itself, and you will count one
+too many.
+
+```sh
+# The starting point: 14 wrong on the untouched tool, so 8 of 22 correct.
 grep -cE 'expected (TRUE|FALSE), got' results/verifier/BASELINE-PROBE-O/test-stdout.txt
 
-# note: match the full failure line. A bare `grep -c expected` also matches pytest's own
-# "PASSED ...::test_expected_verdicts" line and will over-count by one.
+# Confirm the design really was published before the runs. This prints a fingerprint;
+# compare it against the one posted publicly on 13 August, before the first run.
+shasum -a 256 DESIGN.md
 
-# the pre-registration hash posted to #1541 before any trial ran
-shasum -a 256 DESIGN.md          # → 788ca364f417317e6b56bb172e4e89920926048a3e5bd147aeb76486a11adc43
+# Confirm the three instruction texts are the ones actually used.
+shasum -a 256 -c instructions/FINGERPRINTS.sha256
 
-# the three arm instructions are the ones that ran
-shasum -a 256 -c arms/ARM-HASHES.sha256
-
-# this repository is intact
+# Confirm nothing in this repository has been altered since publication.
 shasum -a 256 -c MANIFEST.sha256
 ```
 
-For *why* a trial is coded as it is, read `codings/<TRIAL>.md`. Each cites byte offsets into that trial's agent transcript.
+To understand *why* a run was judged the way it was, open `assessments/<run>.md`. Each one points
+at specific positions in that run's own record, so the judgement can be argued with.
 
-## What is deliberately absent
+## What is deliberately not here
 
-**Full agent transcripts (~14 MB).** The codings cite byte offsets into them. They are available on request — open an issue here or ask on #1541 and they will be sent. They are excluded because publishing detailed behavioural traces of three labs' frontier agents is a separate act from answering a task-triage question.
+**The full moment-by-moment records of what each model did** — roughly 14 MB. The assessments quote
+from them and cite positions within them. They are available to anyone who asks: open an issue here,
+or ask in the discussion thread, and they will be sent. They are held back because publishing
+detailed accounts of how three companies' AI systems behave is a significant act in itself, separate
+from answering a maintainer's question about one task.
 
-**The task's `solution/` and `tests/` directories.** These are the answer key and the 22 hidden programs. They are already public [upstream](https://github.com/harbor-framework/terminal-bench/tree/main/tasks/fix-uautomizer-soundness); re-hosting them here would only make them more findable.
+**The task's official solution and its hidden test programs.** These are the answer key. They are
+already published in the benchmark's own repository; copying them here would only make them easier
+to stumble across.
 
-**The arm64 trials.** Environment-invalid — see below.
+**The first two days of runs.** They were carried out on an Apple Silicon Mac, where this task
+cannot be solved by anyone — see below. They are void, and the log that records them is marked as
+such.
 
-## Related issues filed from this work
+## Problems found along the way, and reported
 
-- [terminal-bench#1601](https://github.com/harbor-framework/terminal-bench/issues/1601) — this task is silently unsolvable on arm64: all 22 programs return `UNKNOWN`, so any Apple Silicon run scores 0 with no error. Our first two days of trials were lost to this before an oracle check caught it.
-- [harbor#2758](https://github.com/harbor-framework/harbor/issues/2758) — harbor resolves the host platform and then discards it; recording it would have made the above diagnosable immediately.
-- [gemini-cli#28825](https://github.com/google-gemini/gemini-cli/issues/28825) — requesting `gemini-3.1-pro-preview` on personal OAuth credentials silently returns a 2.5-series model. This is why there is no Gemini leg here.
+Three separate faults were discovered while running this experiment. All three were reported to the
+projects responsible.
 
-## Provenance
+**The task cannot be solved on Apple Silicon computers.** On those machines the tool answers "I
+cannot tell" for all 22 test programs, so any run scores zero — with no error message and nothing to
+suggest the machine is at fault. It simply looks as though the AI failed. We lost two days to this
+before checking, and the check that caught it was running the task's own official solution and
+seeing it score zero too. Reported as
+[terminal-bench#1601](https://github.com/harbor-framework/terminal-bench/issues/1601).
 
-Run by [@ritsukai](https://github.com/ritsukai) on rented x86 DigitalOcean droplets, 14–15 August 2026. harbor 0.21.0; terminal-bench pinned at `14e2ef927e3bf83bcedb24ad11494fc446f306d8`. Trial orchestration, transcript coding and this write-up were performed with AI assistance; see `LIMITATIONS.md` for what that implies about the results.
+**The benchmark software does not record which kind of computer a run happened on.** It works this
+out in order to build the run, then discards it. Recording it would have made the problem above
+obvious in seconds instead of days. Reported as
+[harbor#2758](https://github.com/harbor-framework/harbor/issues/2758).
+
+**Google's command-line tool silently ran a different model than the one requested.** We asked for
+Gemini 3.1 Pro; the tool returned answers from an older 2.5-series model, with no error and no
+warning. This is why there is no Gemini in the results — we cut it rather than publish numbers under
+the wrong model's name. Reported as
+[gemini-cli#28825](https://github.com/google-gemini/gemini-cli/issues/28825).
+
+## Who ran this, and how
+
+Run by [@ritsukai](https://github.com/ritsukai) on rented Intel/AMD servers, 14–15 August 2026.
+
+The benchmark software was harbor version 0.21.0; the task collection was pinned to a fixed version
+so it could not change mid-experiment.
+
+The runs were orchestrated, the records assessed, and this write-up drafted with substantial help
+from AI. The experiment's design, the decision of what to publish, and every judgement call about
+framing were made by the human author. `LIMITATIONS.md` explains why that matters for how much
+weight to give the results.

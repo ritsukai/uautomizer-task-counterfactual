@@ -1,55 +1,69 @@
 # What this evidence does not prove
 
-Read this before citing anything here.
+Read this before quoting anything from this repository.
 
-## 1. The mechanism codings are not comparable across models
+## 1. The three models were not observed equally, so comparing *how* they worked is unsafe
 
-This is the most serious limitation, and it cuts against the headline.
+This is the most serious problem here, and it cuts against the headline result.
 
-All nine **Fable 5** transcripts have **fully redacted reasoning** — thinking blocks are present but contain zero characters, only signatures. The **Opus 4.6** transcripts contain condensed but contemporaneous reasoning. The **GPT-5.4** (codex) transcripts contain no reasoning items at all.
+When these AI systems work, some of them write down their reasoning as they go and some do not. In this experiment:
 
-The frozen rubric codes provenance from *observable* evidence and explicitly refuses to credit retrospective claims. A model whose reasoning is invisible therefore **cannot earn a `LOCAL` code**, however much local diagnosis it actually performed; a model whose reasoning is visible can.
+- **Fable 5** recorded *nothing* of its reasoning. The slots where its thinking would appear are present but empty in all nine of its records.
+- **Opus 4.6** recorded a condensed version of its reasoning.
+- **GPT-5.4** recorded none either.
 
-So "Fable was upstream-led, Opus was hybrid" is **not a clean capability comparison** — part of that difference is a logging difference. Fable's *actions* are unambiguous (in `F-C01` it fetched upstream ~30 seconds in, before its own reproduction had finished), but its reasoning is unavailable and may have contained diagnosis we cannot see.
+Our method for judging *how* a run reached its answer deliberately relies only on what can be seen: actions taken, files read, things downloaded, edits made, and any reasoning actually written down. It refuses to credit explanations a model gives *afterwards*, because a model that copied an answer can still describe it fluently once it has seen it.
 
-## 2. Both arm C failures were tooling failures, not reasoning failures
+That rule is sound on its own, but it has an unfair consequence here. **A model whose thinking is invisible can never be credited with having worked something out**, no matter how much thinking it actually did. A model whose thinking is visible can.
 
-`G-C03`'s single upstream fetch returned an **empty result**; it never retried by any other method. `O-C03`'s WebFetch returned a **1,575-character English summary instead of source code**, so the XOR hunk was never exposed; its retry narrowed the request to a method it had already diagnosed.
+So the statement "Fable copied, Opus partly reasoned" is **not a clean comparison of ability**. Part of that difference is a difference in what got written down.
 
-Arm C is therefore better described as **4 of 4 when the fetch worked, 0 of 2 when it silently degraded**. The same WebFetch summarisation also hit `O-C01` and `O-C02`, which recovered by falling back to `curl`. Four of six arm C trials were affected by one tool's behaviour.
+What survives this objection: Fable's *actions* are not in doubt. In one run it downloaded the original source about thirty seconds in — before its own attempt to reproduce the bug had even finished. That is visible regardless of what it was thinking.
 
-This claim rests on two coders' independent reads of those transcripts. It has not been separately verified.
+## 2. The two failures in the best-informed condition were tool failures, not thinking failures
 
-## 3. Three trials per cell
+Two runs were given the exact address of the original code and still failed. Neither failed because the model reasoned badly.
 
-n=3 per model per arm. One flipped trial changes a headline. `G-C03` demonstrates this directly: had it landed in block 1 instead of block 3, arm C would have looked meaningfully weaker at the point we were forming conclusions.
+In one, the single attempt to download the file **returned nothing at all**, and the model never tried again by any other means. In the other, the download tool **returned an English summary of the code instead of the code**, so the relevant section was never actually seen; when the model retried, it narrowed its request to a part it had already understood.
 
-## 4. Single task, single day, live endpoints
+So that condition is better described as **four successes out of four when the download worked, and zero out of two when it silently failed**. The same summarising behaviour also affected two runs that did succeed — they recovered by trying a different download method.
 
-One task. All trials 14–15 August 2026. The models are live API endpoints that may change; these results are not reproducible in the strong sense, only re-runnable.
+This reading comes from two independent assessments of those records. It has not been separately checked by anyone else.
 
-## 5. The CLI build is not the leaderboard build
+## 3. Three attempts per box is a small number
 
-The design pins Claude Code 2.1.228 for reproducibility. The exact build used in the June leaderboard submission was never established. Comparability is exact for agent/model/effort, **not** for CLI build.
+Each model attempted each instruction three times. One run landing differently would change a headline.
 
-## 6. There is no Gemini leg
+This is not hypothetical. One run in the best-informed condition failed, and had it happened earlier in the sequence rather than later, our conclusions at that moment would have looked materially different.
 
-The design specified four setups. Gemini could not run as specified — the CLI silently substituted a 2.5-series model for the requested 3.1 Pro ([gemini-cli#28825](https://github.com/google-gemini/gemini-cli/issues/28825)). The leg was cut rather than run under a different model than declared. Its evidence is preserved in `gemini-substitution/`.
+## 4. One task, one day, and the models can change
 
-## 7. Byte offsets point into transcripts that are not published here
+This is a single task. All runs happened on 14–15 August 2026. The AI models are online services that their makers update; these exact results cannot be reproduced in the strict sense, only attempted again.
 
-The codings cite offsets into agent transcripts held back from this repository (see README). Those citations are checkable only once you request the transcripts. This is an honest cost of publishing a curated set; requests will be honoured.
+## 5. The software versions do not exactly match the published leaderboard
 
-## 8. Some per-program attributions are inferred, not measured
+The design fixed a specific version of the AI command-line tool so the experiment would be repeatable. The version used in the public leaderboard entry we are comparing against was never established. The comparison is exact for *which model* and *what effort setting*, but not for the tool build around it.
 
-Where a coding attributes a specific failing program to a specific unfixed defect, that is usually inferred from program names, the defect's semantics, and cross-trial comparison — not from a controlled re-run. `O-A03`'s coder additionally notes that agents hot-swap a recompiled `.class` into the shipped JAR **without verifying the source tree reproduces that JAR**, so source/binary drift cannot be excluded as a contributor to some flips.
+## 6. There is no Gemini here, and that was not planned
 
-## 9. Conflict of interest
+The design called for four model setups. Google's tool silently returned an older model than the one requested, so that setup could not be run as specified. We cut it rather than publish results under a model name that was not what actually ran. The evidence is in `gemini-finding/`.
 
-The headline result favours Fable 5. The experiment was orchestrated, and these transcripts were coded, using Claude models — the same family. The coding rubric was frozen before any coding began, and the raw transcripts are available so any coding can be disputed, but the conflict is real and is not neutralised by those safeguards.
+## 7. The assessments point into records that are not published here
 
-Relatedly: this repository, its analysis, and the accompanying issue comment were produced with substantial AI assistance. The pre-registration, the arm design, and every publication decision were made by the human author; the execution and coding were not.
+Each assessment cites positions in that run's full record. Those records are held back (see the front page) and available on request. Until you request them, those particular citations cannot be checked. That is a real cost of publishing a smaller, readable set, and requests will be answered.
 
-## 10. Three conclusions were reached and then corrected
+## 8. Some cause-and-effect claims are reasoned, not measured
 
-See `CORRECTIONS.md`. Each was wrong in the same direction — reading incompleteness as damage — and each was caught only by checking a specific artifact. That pattern is itself a caution about the rest.
+Where an assessment says a particular failing test program was caused by a particular unfixed fault, that is usually worked out from the program's name, the nature of the fault, and comparison across runs — not from a controlled re-run isolating it.
+
+One assessment raises a further caution: the models rebuild part of the tool and swap the rebuilt piece into place **without ever confirming that the source they compiled matches the version that was shipped**. If those differ, some results could have a cause nobody has accounted for.
+
+## 9. We have a stake in the outcome
+
+The result favours Fable 5. This experiment was orchestrated, and these records assessed, using AI systems from the same family. The standards for judging were written before any record was read, and the raw records are available so any judgement can be disputed — but the conflict of interest is real and those safeguards do not erase it.
+
+More broadly: the runs, the assessments, and this write-up were produced with substantial AI assistance. The design, the decision to publish, and the framing choices were made by the human author. The work in between was not.
+
+## 10. We got three things wrong before getting them right
+
+See `CORRECTIONS.md`. All three mistakes ran the same way — treating an unfinished repair as a broken one — and each was caught only by going back to a specific file rather than trusting our own summary of it. That pattern is itself a reason to check the rest rather than take it on trust.
