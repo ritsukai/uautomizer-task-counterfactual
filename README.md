@@ -101,6 +101,7 @@ So `F-A01` is Fable 5's first attempt under the plainest instruction. Every file
 | Path | What it is |
 |---|---|
 | `results/MASTER-SUMMARY.tsv` | One row per run: score, improvement, and a summary of how it worked. |
+| `results/OTHER-FINDINGS.md` | Three side observations for anyone maintaining the task: that its intended difficulty does work, that the anti-bypass defence is visible to any agent that compares against the original, and that file timestamps leak the tampering too. |
 | `results/verifier/<run>/` | The grading program's own output for that run — which test programs passed, which failed, and the final score. |
 | `results/verifier/BASELINE-PROBE-O/` | The same, for the untouched tool. This is where the 8-out-of-22 figure comes from. |
 
