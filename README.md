@@ -179,6 +179,10 @@ to stumble across.
 cannot be solved by anyone — see below. They are void, and the log that records them is marked as
 such.
 
+## The follow-up: what happens when the leak is closed
+
+After the main results were posted, the version identifier was stripped from the task image and the strongest setup re-run on the unmodified instruction — pre-registered in `extension/EXTENSION-DESIGN.md` before the run. **It passed anyway, and not by finding another route to the version: it never touched the network at all.** It located the modified files by their timestamps and worked out all three faults by reading the code — the way the task intended. The leak was a shortcut, not a crutch. See `extension/RESULTS.md`.
+
 ## Problems found along the way, and reported
 
 Three separate faults were discovered while running this experiment. All three were reported to the
