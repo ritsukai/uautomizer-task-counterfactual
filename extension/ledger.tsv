@@ -1,0 +1,3 @@
+ORACLE-AS	infra	F	AS	1	-	2026-08-17T09-10-28	-	0	oracle gate on the version-stripped image: task reference solution applied; 5/5 verifier tests pass, 0 UNKNOWN. Gate for extension A2 per EXTENSION-DESIGN.md.
+PROBE-AS	infra	F	AS	0	claude-haiku-4-5	2026-08-17T09-22-05	-	0	baseline probe (max_turns=3) on the stripped image: 8/22 correct, identical to the original baseline — strip changed nothing about task behavior. Runtime banner separately verified printing zeroed values.
+XS-F-01	valid	F	AS	1	claude-fable-5	2026-08-17T09:30:40Z	2026-08-17T10:03:01Z	0	

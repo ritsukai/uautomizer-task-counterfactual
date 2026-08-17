@@ -1,0 +1,61 @@
+diff -ru ~/tb-1541/run/arms/armA/fix-uautomizer-soundness/environment/Dockerfile ~/tb-1541/run/arms/armAS/fix-uautomizer-soundness/environment/Dockerfile
+--- ~/tb-1541/run/arms/armA/fix-uautomizer-soundness/environment/Dockerfile	2026-08-13 16:30:03
++++ ~/tb-1541/run/arms/armAS/fix-uautomizer-soundness/environment/Dockerfile	2026-08-17 11:06:41
+@@ -38,6 +38,20 @@
+ # Use system z3 so the bundled binary doesn't cause libc issues
+ RUN cp "$(which z3)" /app/ultimate/z3 && chmod +x /app/ultimate/z3
+ 
++# ── Extension A2: strip the build-commit identifier (see extension/EXTENSION-DESIGN.md) ──
++# Site 1: the Python wrapper hardcodes and prints the commit hash.
++RUN sed -i "s/version = '0e0057cc'/version = '00000000'/" /app/ultimate/Ultimate.py && \
++    ! grep -q "0e0057cc" /app/ultimate/Ultimate.py
++# Site 2: version.properties inside the core jar carries the full 40-char commit id,
++# which the Java banner ("This is Ultimate 0.2.4-dev-...") reads at runtime.
++RUN cd /tmp && \
++    unzip -o /app/ultimate/plugins/de.uni_freiburg.informatik.ultimate.core_0.2.4.jar version.properties && \
++    sed -i -e "s/^git.commit.id=.*/git.commit.id=0000000000000000000000000000000000000000/" \
++           -e "s/^git.commit.id.abbrev=.*/git.commit.id.abbrev=0000000/" version.properties && \
++    jar uf /app/ultimate/plugins/de.uni_freiburg.informatik.ultimate.core_0.2.4.jar version.properties && \
++    rm version.properties && \
++    ! (unzip -p /app/ultimate/plugins/de.uni_freiburg.informatik.ultimate.core_0.2.4.jar version.properties | grep -q "0e0057c")
++
+ # Reduce JVM heap ceiling so the container doesn't need 12 GB
+ RUN sed -i 's/-Xmx12G/-Xmx4G/g' /app/ultimate/Ultimate.ini && \
+     sed -i 's|@user.home/.ultimate|/tmp/.ultimate|g' /app/ultimate/Ultimate.ini
+diff -ru ~/tb-1541/run/arms/armA/fix-uautomizer-soundness/tests/Dockerfile ~/tb-1541/run/arms/armAS/fix-uautomizer-soundness/tests/Dockerfile
+--- ~/tb-1541/run/arms/armA/fix-uautomizer-soundness/tests/Dockerfile	2026-08-13 16:30:03
++++ ~/tb-1541/run/arms/armAS/fix-uautomizer-soundness/tests/Dockerfile	2026-08-17 11:07:03
+@@ -40,6 +40,20 @@
+ 
+ RUN cp "$(which z3)" /app/ultimate/z3 && chmod +x /app/ultimate/z3
+ 
++# ── Extension A2: strip the build-commit identifier (see extension/EXTENSION-DESIGN.md) ──
++# Site 1: the Python wrapper hardcodes and prints the commit hash.
++RUN sed -i "s/version = '0e0057cc'/version = '00000000'/" /app/ultimate/Ultimate.py && \
++    ! grep -q "0e0057cc" /app/ultimate/Ultimate.py
++# Site 2: version.properties inside the core jar carries the full 40-char commit id,
++# which the Java banner ("This is Ultimate 0.2.4-dev-...") reads at runtime.
++RUN cd /tmp && \
++    unzip -o /app/ultimate/plugins/de.uni_freiburg.informatik.ultimate.core_0.2.4.jar version.properties && \
++    sed -i -e "s/^git.commit.id=.*/git.commit.id=0000000000000000000000000000000000000000/" \
++           -e "s/^git.commit.id.abbrev=.*/git.commit.id.abbrev=0000000/" version.properties && \
++    jar uf /app/ultimate/plugins/de.uni_freiburg.informatik.ultimate.core_0.2.4.jar version.properties && \
++    rm version.properties && \
++    ! (unzip -p /app/ultimate/plugins/de.uni_freiburg.informatik.ultimate.core_0.2.4.jar version.properties | grep -q "0e0057c")
++
+ RUN sed -i 's/-Xmx12G/-Xmx4G/g' /app/ultimate/Ultimate.ini && \
+     sed -i 's|@user.home/.ultimate|/tmp/.ultimate|g' /app/ultimate/Ultimate.ini
+ 
+diff -ru ~/tb-1541/run/arms/armA/fix-uautomizer-soundness/tests/test_outputs.py ~/tb-1541/run/arms/armAS/fix-uautomizer-soundness/tests/test_outputs.py
+--- ~/tb-1541/run/arms/armA/fix-uautomizer-soundness/tests/test_outputs.py	2026-08-13 16:30:03
++++ ~/tb-1541/run/arms/armAS/fix-uautomizer-soundness/tests/test_outputs.py	2026-08-17 11:07:17
+@@ -36,7 +36,8 @@
+ )
+ # SHA-256 of the unmodified Ultimate.py shipped with UltimateAutomizer v0.2.4.
+ # If an agent edits Ultimate.py to hard-code verdicts, this test will catch it.
+-ULTIMATE_PY_SHA256 = "bb0e968044c0853e682942c41d04298e4f70f32ef38876a098c028a2b2736822"
++# Extension A2: hash updated for the version-stripped Ultimate.py (commit id zeroed; see extension/EXTENSION-DESIGN.md)
++ULTIMATE_PY_SHA256 = "afdc69575e2162555cd9731a07605e2e7adb9f3ac21f579baf54a405275b07a2"
+ TRACE_REPORTER_SRC_SHA256 = "683be9538ea2c01fa992386e70c20250422b4a661f69db99a3afd0ea8d089db6"
+ CACSL_ACTIVATOR_SRC_SHA256 = "456d4deedc1dd67163ee5bf76e8700f37ab2d8a4d0071bb022d189fde77d4f1d"
+ TRACE_JAR_SHA256 = "5541bd11d59212fb03c17970841b53cd48ebf800f021446b24f7c5fc03ae1196"
